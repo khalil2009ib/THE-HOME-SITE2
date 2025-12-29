@@ -17,15 +17,16 @@
 <div id="site-list">Loading...</div>
 
 <script>
-  const sheetUrl = https://docs.google.com/spreadsheets/d/e/2PACX-1vRCbQeue11n8S0HjYSgbhKCvQdFuQ8brWhPmt0haGdukKDuGEL7HuimYjq9QaDFk_lrXhdr6qemrRyl/pub?output=csv
+  const sheetUrl = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRCbQeue11n8S0HjYSgbhKCvQdFuQ8brWhPmt0haGdukKDuGEL7HuimYjq9QaDFk_lrXhdr6qemrRyl/pub?gid=0&single=true&output=csv";
+
   fetch(sheetUrl)
     .then(response => response.text())
     .then(data => {
-      const rows = data.split("\n").slice(1); //
+      const rows = data.split("\n").slice(1); // 
       let html = "";
       rows.forEach(row => {
         const cols = row.split(",");
-        if(cols.length >= 3) { //
+        if(cols.length >= 3) { // 
           html += <div class="site-card">
                      <h3>${cols[0]}</h3>
                      <p>${cols[1]}</p>
