@@ -354,33 +354,52 @@
             </div>
 
             <div id="listings">
-                <!-- Mock Data Listings -->
-                <div class="listing-card">
-                    <div class="listing-info">
-                        <h4>E-commerce Fashion Store</h4>
-                        <p>Shopify-based, $2k monthly revenue, US market.</p>
-</div>
-                    <div class="listing-price">$12,000</div>
-                    <button class="btn btn-primary" style="width: auto; padding: 10px 20px;" onclick="showMessage('Contact seller via dashboard after login.')">Contact</button>
-                </div>
-                <div class="listing-card">
-                    <div class="listing-info">
-                        <h4>SaaS Productivity Tool</h4>
-                        <p>Next.js app with 500 active users. Low maintenance.</p>
-                    </div>
-                    <div class="listing-price">$4,500</div>
-                    <button class="btn btn-primary" style="width: auto; padding: 10px 20px;" onclick="showMessage('Contact seller via dashboard after login.')">Contact</button>
-                </div>
-                <div class="listing-card">
-                    <div class="listing-info">
-                        <h4>Crypto News Portal</h4>
-                        <p>High traffic SEO optimized WordPress site.</p>
-                    </div>
-                    <div class="listing-price">$8,000</div>
-                    <button class="btn btn-primary" style="width: auto; padding: 10px 20px;" onclick="showMessage('Contact seller via dashboard after login.')">Contact</button>
-                </div>
-            </div>
-        </section>
+            <!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Buy Websites</title>
+<style>
+  body { font-family: Arial, sans-serif; background: #f5f5f5; padding: 20px; }
+  .site-card { background: #fff; border-radius: 8px; padding: 15px; margin-bottom: 10px; box-shadow: 0 2px 5px rgba(0,0,0,0.1);}
+  .site-card h3 { margin: 0 0 5px 0; }
+  .site-card p { margin: 0; }
+</style>
+</head>
+<body>
+
+<h1>Available Websites for Sale</h1>
+<div id="site-list">Loading...</div>
+
+<script>
+  const sheetUrl = https://docs.google.com/spreadsheets/d/e/2PACX-1vRCbQeue11n8S0HjYSgbhKCvQdFuQ8brWhPmt0haGdukKDuGEL7HuimY7q9QaDFk_lrXhdr6qemrRyl/pub?output=csv
+
+  fetch(sheetUrl)
+    .then(response => response.text())
+    .then(data => {
+      const rows = data.split("\n").slice(1);
+      let html = "";
+      rows.forEach(row => {
+        const cols = row.split(",");
+        if(cols.length >= 3) {
+          html += <div class="site-card">
+                     <h3>${cols[0]}</h3>
+                     <p>${cols[1]}</p>
+                     <p>Price: ${cols[2]}</p>
+                   </div>;
+        }
+      });
+      document.getElementById("site-list").innerHTML = html || "No sites available.";
+    })
+    .catch(err => {
+      console.error(err);
+      document.getElementById("site-list").innerHTML = "Failed to load data.";
+    });
+</script>
+
+</body>
+</html>
 
         <!-- REQUEST A WEBSITE -->
         <section id="request">
@@ -501,6 +520,7 @@
     </script>
 </body>
 </html>
+
 
 
 
