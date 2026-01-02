@@ -1,4 +1,4 @@
-
+Mama 2, [24-12-2025 11:44]
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -145,7 +145,7 @@
             margin-bottom: 10px;
         }
 
-
+Mama 2, [24-12-2025 11:44]
 .action-card p {
             color: var(--text-dim);
             font-size: 0.95rem;
@@ -291,14 +291,14 @@
 
     <div class="container">
 
-
+Mama 2, [24-12-2025 11:44]
 <!-- HOME PAGE -->
         <section id="home" class="active">
             <div class="hero">
                 <h1>HOME SITE</h1>
                 <p>The premium ecosystem to buy, sell, and build web projects. No middlemen, no commissions.</p>
             </div>
-         
+            
             <div class="card-grid">
                 <div class="action-card" onclick="navigateTo('buy')">
                     <div class="card-icon">🛒</div>
@@ -341,9 +341,66 @@
                 <h2>Want to sell your website?</h2>
                 <p>Fill in your website details and contact information. Buyers will contact you directly. <strong>No commission – monthly subscription only.</strong></p>
             </div>
-            <iframe src="https://tally.so/r/dWNeXV" width="100%" height="800" frameborder="0" allowfullscreen></iframe>
+            
             <form onsubmit="handleFormSubmit(event, 'listing')">
-                <div class="form-gro
+                <div class="form-group">
+                    <label>Website Name</label>
+                    <input type="text" placeholder="e.g. MyTechBlog.com" required>
+                </div>
+                <div class="form-group">
+                    <label>Description</label>
+                    <textarea rows="4" placeholder="Traffic, revenue, and stack details..." required></textarea>
+                </div>
+                <div class="form-group">
+                    <label>Asking Price ($)</label>
+                    <input type="number" placeholder="5000" required>
+                </div>
+                <div class="form-group">
+                    <label>Contact (Email or WhatsApp)</label>
+                    <input type="text" placeholder="+1234567890" required>
+                </div>
+                <button type="submit" class="btn btn-primary">Publish Listing</button>
+            </form>
+        </section>
+
+        <!-- BUY A WEBSITE -->
+        <section id="buy">
+            <button class="btn btn-back" onclick="navigateTo('home')">← Back Home</button>
+            <div class="content-header">
+                <h2>Looking to buy a website?</h2>
+                <p>Contact sellers directly and negotiate freely. We verify subscriptions but you handle the deal.</p>
+            </div>
+
+            <div id="listings">
+                <!-- Mock Data Listings -->
+                <div class="listing-card">
+                    <div class="listing-info">
+                        <h4>E-commerce Fashion Store</h4>
+                        <p>Shopify-based, $2k monthly revenue, US market.</p>
+
+Mama 2, [24-12-2025 11:44]
+</div>
+                    <div class="listing-price">$12,000</div>
+                    <button class="btn btn-primary" style="width: auto; padding: 10px 20px;" onclick="showMessage('Contact seller via dashboard after login.')">Contact</button>
+                </div>
+                <div class="listing-card">
+                    <div class="listing-info">
+                        <h4>SaaS Productivity Tool</h4>
+                        <p>Next.js app with 500 active users. Low maintenance.</p>
+                    </div>
+                    <div class="listing-price">$4,500</div>
+                    <button class="btn btn-primary" style="width: auto; padding: 10px 20px;" onclick="showMessage('Contact seller via dashboard after login.')">Contact</button>
+                </div>
+                <div class="listing-card">
+                    <div class="listing-info">
+                        <h4>Crypto News Portal</h4>
+                        <p>High traffic SEO optimized WordPress site.</p>
+                    </div>
+                    <div class="listing-price">$8,000</div>
+                    <button class="btn btn-primary" style="width: auto; padding: 10px 20px;" onclick="showMessage('Contact seller via dashboard after login.')">Contact</button>
+                </div>
+            </div>
+        </section>
 
         <!-- REQUEST A WEBSITE -->
         <section id="request">
@@ -399,85 +456,268 @@
             <button class="btn btn-primary" style="max-width: 300px;" onclick="showMessage('Opening consultation scheduler...')">Book a Consultation</button>
         </section>
 
+Mama 2, [02-01-2026 18:31]
+import React, { useState, useEffect } from 'react';
+import { initializeApp } from 'firebase/app';
+import { 
+  getFirestore, 
+  collection, 
+  addDoc, 
+  onSnapshot, 
+  query, 
+  serverTimestamp 
+} from 'firebase/firestore';
+import { 
+  getAuth, 
+  signInAnonymously, 
+  signInWithCustomToken, 
+  onAuthStateChanged 
+} from 'firebase/auth';
+import { 
+  PlusCircle, 
+  ShoppingBag, 
+  Phone, 
+  Mail, 
+  ExternalLink, 
+  Loader2, 
+  CheckCircle2,
+  AlertCircle,
+  Globe,
+  ArrowRight,
+  Zap
+} from 'lucide-react';
 
-<!-- THANK YOU PAGE -->
-        <section id="thanks">
-            <div class="success-msg">
-                <div style="font-size: 4rem; margin-bottom: 20px;">✅</div>
-                <h2>Thank You!</h2>
-                <p id="thanks-text" style="margin-bottom: 30px;">Your submission has been received. We will contact you shortly.</p>
-                <button class="btn btn-primary" style="max-width: 200px;" onclick="navigateTo('home')">Return Home</button>
+// --- Firebase Configuration ---
+const firebaseConfig = JSON.parse(__firebase_config);
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
+const appId = typeof app_id !== 'undefined' ? app_id : 'home-site-dark';
+
+export default function App() {
+  const [user, setUser] = useState(null);
+  const [view, setView] = useState('buy');
+  const [listings, setListings] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [submitting, setSubmitting] = useState(false);
+  const [submitted, setSubmitted] = useState(false);
+  const [error, setError] = useState(null);
+
+  const [formData, setFormData] = useState({
+    name: '',
+    description: '',
+    phone: '',
+    email: '',
+    price: ''
+  });
+
+  useEffect(() => {
+    const initAuth = async () => {
+      try {
+        if (typeof initial_auth_token !== 'undefined' && initial_auth_token) {
+          await signInWithCustomToken(auth, __initial_auth_token);
+        } else {
+          await signInAnonymously(auth);
+        }
+      } catch (err) {
+        setError("Connection failed. Please refresh.");
+      }
+    };
+    initAuth();
+    const unsubscribe = onAuthStateChanged(auth, setUser);
+    return () => unsubscribe();
+  }, []);
+
+  useEffect(() => {
+    if (!user) return;
+    const listingsRef = collection(db, 'artifacts', appId, 'public', 'data', 'listings');
+    const q = query(listingsRef);
+    const unsubscribe = onSnapshot(q, (snapshot) => {
+      const data = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+      const sorted = data.sort((a, b) => (b.createdAt?.seconds  0) - (a.createdAt?.seconds  0));
+      setListings(sorted);
+      setLoading(false);
+    }, () => {
+      setError("Failed to load listings.");
+      setLoading(false);
+    });
+    return () => unsubscribe();
+  }, [user]);
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if (!user) return;
+    setSubmitting(true);
+    try {
+      const listingsRef = collection(db, 'artifacts', appId, 'public', 'data', 'listings');
+      await addDoc(listingsRef, {
+        ...formData,
+        price: parseFloat(formData.price),
+        createdAt: serverTimestamp(),
+        sellerId: user.uid
+      });
+      setSubmitted(true);
+      setFormData({ name: '', description: '', phone: '', email: '', price: '' });
+      setTimeout(() => { setSubmitted(false); setView('buy'); }, 2000);
+    } catch (err) {
+      setError("Submission failed.");
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({ ...prev, [name]: value }));
+  };
+
+  return (
+    <div className="min-h-screen bg-[#0F172A] font-sans text-slate-100 selection:bg-purple-500/30">
+      {/* Header */}
+      <nav className="sticky top-0 z-50 bg-[#0F172A]/80 backdrop-blur-xl border-b border-white/5 px-6 py-4">
+        <div className="max-w-7xl mx-auto flex justify-between items-center">
+          <div className="flex items-center gap-2 font-black text-2xl tracking-tighter text-white">
+            <div className="p-1.5 bg-purple-600 rounded-lg shadow-lg shadow-purple-500/20">
+              <Globe className="w-6 h-6 text-white" />
             </div>
-        </section>
-    </div>
+            <span>HOME SITE</span>
 
-    <!-- NOTIFICATION BOX -->
-    <div id="toast" style="position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); background: #fff; color: #000; padding: 12px 24px; border-radius: 30px; font-weight: 600; display: none; z-index: 2000; box-shadow: 0 10px 30px rgba(0,0,0,0.5);"></div>
+Mama 2, [02-01-2026 18:31]
+</div>
+          <div className="flex gap-2">
+            <button 
+              onClick={() => setView('buy')}
+              className={px-5 py-2.5 rounded-xl text-sm font-bold transition-all ${view === 'buy' ? 'bg-purple-600 text-white shadow-xl shadow-purple-600/20' : 'text-slate-400 hover:text-white hover:bg-white/5'}}
+            >
+              Marketplace
+            </button>
+            <button 
+              onClick={() => setView('sell')}
+              className={px-5 py-2.5 rounded-xl text-sm font-bold transition-all ${view === 'sell' ? 'bg-purple-600 text-white shadow-xl shadow-purple-600/20' : 'text-slate-400 hover:text-white hover:bg-white/5'}}
+            >
+              List Website
+            </button>
+          </div>
+        </div>
+      </nav>
 
-    <script>
-        // --- ROUTING LOGIC ---
-        function navigateTo(sectionId) {
-            // Hide all sections
-            const sections = document.querySelectorAll('section');
-            sections.forEach(s => s.classList.remove('active'));
+      <main className="max-w-7xl mx-auto p-6 md:p-12">
+        {error && (
+          <div className="mb-8 p-4 bg-red-500/10 border border-red-500/20 text-red-400 rounded-2xl flex items-center gap-3">
+            <AlertCircle className="w-5 h-5" /> {error}
+          </div>
+        )}
 
-            // Show target section
-            const target = document.getElementById(sectionId);
-            if(target) {
-                target.classList.add('active');
-                window.scrollTo(0, 0);
-            }
-        }
+        {view === 'buy' ? (
+          <section>
+            <div className="mb-12 flex flex-col md:flex-row md:items-end justify-between gap-6">
+              <div className="space-y-2">
+                <h1 className="text-5xl font-black text-white tracking-tight">Digital Assets</h1>
+                <p className="text-slate-400 text-lg font-medium">Acquire established web projects instantly.</p>
+              </div>
+              <div className="flex items-center gap-2 px-4 py-2 bg-purple-500/10 text-purple-400 rounded-full text-xs font-bold border border-purple-500/20 ring-1 ring-purple-500/30">
+                <Zap className="w-3.5 h-3.5 fill-current" />
+                LIVE SYNC ACTIVE
+              </div>
+            </div>
 
-        // --- FORM HANDLING ---
-        function handleFormSubmit(event, type) {
-            event.preventDefault();
-            
-            // In a real app, you'd send an API request here.
-            // For this MVP, we redirect to thank you page.
-            const thanksText = document.getElementById('thanks-text');
-            
-            if (type === 'listing') {
-                thanksText.innerText = "Your website listing has been submitted for review. It will go live once your subscription is confirmed.";
-            } else if (type === 'request') {
-                thanksText.innerText = "Your project request is now visible to our network of professional developers.";
-            }
+            {loading ? (
+              <div className="flex flex-col items-center justify-center py-32">
+                <Loader2 className="w-12 h-12 text-purple-500 animate-spin" />
+                <p className="mt-4 text-slate-500 font-medium">Fetching real-time data...</p>
+              </div>
+            ) : listings.length === 0 ? (
+              <div className="text-center py-32 bg-white/5 rounded-[3rem] border border-white/10 border-dashed">
+                <ShoppingBag className="w-16 h-16 text-white/10 mx-auto mb-4" />
+                <p className="text-slate-400 text-xl font-semibold">The marketplace is empty.</p>
+                <button 
+                  onClick={() => setView('sell')}
+                  className="mt-4 text-purple-400 font-bold hover:text-purple-300 transition-colors flex items-center justify-center gap-2 mx-auto"
+                >
+                  Post a new listing <ArrowRight className="w-4 h-4" />
+                </button>
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                {listings.map((item) => (
+                  <div key={item.id} className="group bg-white/5 rounded-[2.5rem] border border-white/10 p-1 hover:border-purple-500/50 hover:bg-white/[0.07] transition-all duration-500">
+                    <div className="p-8 h-full flex flex-col">
+                      <div className="flex justify-between items-start mb-6">
+                        <h3 className="text-2xl font-black text-white leading-tight group-hover:text-purple-400 transition-colors">{item.name}</h3>
+                        <div className="bg-purple-600 text-white font-black px-4 py-2 rounded-2xl text-sm shadow-lg shadow-purple-600/20">
+                          ${item.price.toLocaleString()}
+                        </div>
+                      </div>
+                      <p className="text-slate-400 mb-8 line-clamp-4 text-sm leading-relaxed flex-grow">
+                        {item.description}
 
-            navigateTo('thanks');
-        }
+Mama 2, [02-01-2026 18:31]
+</p>
+                      
+                      <div className="space-y-3 pt-6 border-t border-white/5">
+                        <div className="flex items-center gap-4 text-slate-400 hover:text-white transition-colors">
+                          <Phone className="w-4 h-4 text-purple-500" />
+                          <span className="text-sm font-bold">{item.phone}</span>
+                        </div>
+                        <div className="flex items-center gap-4 text-slate-400 hover:text-white transition-colors">
+                          <Mail className="w-4 h-4 text-purple-500" />
+                          <span className="text-sm font-bold truncate">{item.email}</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </section>
+        ) : (
+          <section className="max-w-2xl mx-auto">
+            <div className="mb-10 text-center space-y-2">
+              <h1 className="text-4xl font-black text-white tracking-tight">Sell Your Asset</h1>
+              <p className="text-slate-400 text-lg">Your listing will be live on the dashboard instantly.</p>
+            </div>
 
-        // --- UI UTILS ---
-        function showMessage(msg) {
-            const toast = document.getElementById('toast');
-            toast.innerText = msg;
-            toast.style.display = 'block';
-            setTimeout(() => {
-                toast.style.display = 'none';
-            }, 3000);
-        }
+            <div className="bg-white/5 rounded-[3rem] p-8 md:p-12 border border-white/10 shadow-2xl">
+              {submitted ? (
+                <div className="py-16 flex flex-col items-center text-center animate-in zoom-in fade-in duration-500">
+                  <div className="w-24 h-24 bg-purple-500/20 rounded-full flex items-center justify-center mb-6">
+                    <CheckCircle2 className="w-12 h-12 text-purple-400" />
+                  </div>
+                  <h2 className="text-3xl font-black text-white">Listed!</h2>
+                  <p className="text-slate-400 mt-2 text-lg">Your project is now visible to buyers.</p>
+                </div>
+              ) : (
+                <form onSubmit={handleSubmit} className="space-y-8">
+                  <div className="space-y-6">
+                    <div>
+                      <label className="text-xs font-black uppercase tracking-widest text-slate-500 ml-1 mb-2 block">Website Name</label>
+                      <input
+                        required
+                        name="name"
+                        value={formData.name}
+                        onChange={handleInputChange}
+                        placeholder="Project Alpha"
+                        className="w-full px-6 py-4 rounded-2xl border border-white/10 bg-white/5 text-white focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all outline-none"
+                      />
+                    </div>
+                    
+                    <div>
+                      <label className="text-xs font-black uppercase tracking-widest text-slate-500 ml-1 mb-2 block">Asking Price (USD)</label>
+                      <input
+                        required
+                        type="number"
+                        name="price"
+                        value={formData.price}
+                        onChange={handleInputChange}
+                        placeholder="5000"
+                        className="w-full px-6 py-4 rounded-2xl border border-white/10 bg-white/5 text-white focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all outline-none"
+                      />
+                    </div>
 
-        // Handle URL Hash for basic navigation support
-        window.onpopstate = function() {
-            const hash = window.location.hash.replace('#', '') || 'home';
-            navigateTo(hash);
-        };
-    </script>
-</body>
-</html>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+                    <div>
+                      <label className="text-xs font-black uppercase tracking-widest text-slate-500 ml-1 mb-2 block">Description</label>
+                      <textarea
+                        required
+                        name="description"
+                        value={formData.description}
+                        onChange={handleInputChange}
