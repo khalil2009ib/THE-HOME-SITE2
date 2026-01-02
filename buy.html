@@ -61,21 +61,20 @@ async function fetchListings() {
         container.innerHTML = ''; //  Loading
 
         rows.forEach(row => {
-            const cols = row.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/);
-            if(cols.length >= 3) {
-                const name = cols[0].replace(/"/g, '').trim();
-                const description = cols[1].replace(/"/g, '').trim();
-                const price = cols[2].replace(/"/g, '').trim();
+            if (columns.length >= 3) {
+    const name = columns[0].replace(/"/g, '').trim();
+    const description = columns[1].replace(/"/g, '').trim();
+    const price = columns[2].replace(/"/g, '').trim();
 
-                const card = document.createElement('div');
-                card.className = 'listing-card';
-                card.innerHTML = 
-                    <h2>${name}</h2>
-                    <p>${description}</p>
-                    <div class="listing-price">${price}</div>
-                ;
-                container.appendChild(card);
-            }
+    const card = document.createElement('div');
+    card.className = 'listing-card';
+    card.innerHTML = 
+        <h2>${name}</h2>
+        <p>${description}</p>
+        <div class="listing-price">${price}</div>
+    ;
+    container.appendChild(card);
+}
         });
 
     } catch(err) {
