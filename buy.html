@@ -1,91 +1,76 @@
 
-      <!DOCTYPE html>
+  <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Buy Websites</title>
 <style>
-body {
+  body {
+    background-color: #0a0a0a;/
     font-family: Arial, sans-serif;
-    background-color: #0a0a0a; 
     color: #fff;
     padding: 20px;
-}
-#listings-container {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-    gap: 20px;
-}
-.listing-card {
-    background-color: #1a1a1a; 
-    border-radius: 8px;
-    padding: 20px;
-    box-shadow: 0 4px 6px rgba(0,0,0,0.3);
-}
-.listing-card h2 {
-    color: #ff00ff; 
-}
-.listing-card p {
-    color: #ccc;
-}
-.listing-price {
-    font-weight: bold;
-    color: #00ff00;  
-    margin-top: 10px;
-    text-align: right;
-}
-.loading {
+  }
+  h1 {
     text-align: center;
-    font-size: 1.2rem;
-}
+    color: #fff;
+    margin-bottom: 30px;
+  }
+  .card-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 20px;
+  }
+  .card {
+    background-color: #1a1a1a;
+    border-radius: 10px;
+    padding: 20px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.5);
+  }
+  .card h2 {
+    color: #9b59b6; 
+    margin-top: 0;
+  }
+  .card p {
+    color: #ccc;
+  }
+  .card .price {
+    color: #28a745;
+    font-weight: bold;
+    margin-top: 10px;
+  }
+  .card button {
+    margin-top: 15px;
+    padding: 10px;
+    background-color: #9b59b6; 
+    border: none;
+    border-radius: 5px;
+    color: #fff;
+    cursor: pointer;
+  }
+  .card button:hover {
+    background-color: #7d3c98;
+  }
 </style>
 </head>
 <body>
 
 <h1>Available Websites for Sale</h1>
-<div id="listings-container">
-    <div class="loading">Loading listings...</div>
+
+<div class="card-container">
+  
+  <div class="card">
+    <h2>MyCoolSite</h2>
+    <p>Description: A modern website for online stores.</p>
+    <p>Phone: +123456789</p>
+    <p>Email: info@mycoolsite.com</p>
+    <div class="price">$199</div>
+    <button>Buy Now</button>
+  </div>
+
+  <
 </div>
-
-<script>
-const csvUrl = https://docs.google.com/spreadsheets/d/e/2PACX-1vRCbQeue11n8S0HjYSgbhKCvQdFuQ8brWhPmt0haGdukKDuGEL7HuimY7q9QaDFk_lrXhdr6qemrRyl/pub?output=csv
-
-async function fetchListings() {
-    try {
-        const response = await fetch(csvUrl);
-        const data = await response.text();
-
-        const rows = data.split('\n').slice(1); //
-        const container = document.getElementById('listings-container');
-        container.innerHTML = ''; //  Loading
-
-        rows.forEach(row => {
-            if (columns.length >= 3) {
-    const name = columns[0].replace(/"/g, '').trim();
-    const description = columns[1].replace(/"/g, '').trim();
-    const price = columns[2].replace(/"/g, '').trim();
-
-    const card = document.createElement('div');
-    card.className = 'listing-card';
-    card.innerHTML = 
-        <h2>${name}</h2>
-        <p>${description}</p>
-        <div class="listing-price">${price}</div>
-    ;
-    container.appendChild(card);
-}
-        });
-
-    } catch(err) {
-        console.error(err);
-        document.getElementById('listings-container').innerHTML = 
-            '<div class="loading">Failed to load listings.</div>';
-    }
-}
-
-fetchListings();
-</script>
 
 </body>
 </html>
